@@ -7,8 +7,8 @@
 
 {#-   Get IPv4 and IPv6 addresses from the DNS #}
 {%-   if not ((omit_ip_address is sameas true) or (host in omit_ip_address)) %}
-{%-     set ip4 = salt['dig.A'](host) -%}
-{%-     set ip6 = salt['dig.AAAA'](host) -%}
+{%-     set ip4 = [salt['hostname2ip.resolve'](host)] -%}
+{%-     set ip6 = [] -%}
 {%-   else %}
 {%-     set ip4 = [] -%}
 {%-     set ip6 = [] -%}
@@ -71,7 +71,7 @@
 {%- set aliases = known_hosts | traverse('aliases', []) -%}
 {%- set aliases_ips = {} -%}
 {%- for alias in aliases -%}
-  {%- for ip in salt['dig.A'](alias) + salt['dig.AAAA'](alias) -%}
+  {%- for ip in [salt['hostname2ip.resolve'](alias)] -%}
     {%- do aliases_ips.setdefault(ip, []).append(alias) -%}
   {%- endfor -%}
 {%- endfor -%}
